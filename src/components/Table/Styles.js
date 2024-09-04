@@ -12,6 +12,7 @@ export const TableContainer = styled.div`
     border: solid 1px gold;
     position: relative;
     top: 50%; 
+    left: 5%;
     border-radius: 10px;
 `;
 

@@ -6,14 +6,15 @@ import {
 } from "react-router-dom";
 
 import { AppLayout } from "./components";
-import { MainPage } from "./pages"
+import { MainPage, LoginPage } from "./pages"
 
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route>
       <Route path="/" element={<AppLayout />}>
-        <Route index element={<MainPage />} />
+        <Route index element={<LoginPage />} />
+        <Route path="/room/:code" element={<MainPage />} />
       </Route>
     </Route>
   )

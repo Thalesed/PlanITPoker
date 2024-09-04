@@ -20,4 +20,8 @@ export const CardContainer = styled.div`
         color: #222222;
         background-color: gold;
     }
+    &:active{
+        color: #222222;
+        background-color: gold;
+    }
 `;

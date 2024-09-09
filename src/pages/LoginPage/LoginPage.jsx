@@ -33,7 +33,8 @@ export default function LoginPage() {
       setErrorText("Nome é campo obrigatório");
     }else{
       createUser({
-        "name":userName
+        "name":userName,
+        "type": true,
       });
       setIsCreateModalVisible(prevState => !prevState);
     }  }

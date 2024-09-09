@@ -27,6 +27,7 @@ export default function EnterRoomModel({ modalDisplay, closeModal }) {
     isSuccess,
     isError,
     error,
+    refetch,
   } = useGetRoom({
     code,
     onError: (err) => {
@@ -40,7 +41,10 @@ export default function EnterRoomModel({ modalDisplay, closeModal }) {
       console.log(err);
     },
     onSuccess: () => {
-      navigate(`/room/${room.code}`);
+      console.log("usuario adicionado!! #######");
+      refetch().then(() => {
+        navigate(`/room/${room.code}`);
+      });
     },
   });
   

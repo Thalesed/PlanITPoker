@@ -15,6 +15,7 @@ export async function createUser(body) {
     const { setUser } = useAuthStore.getState();
 
     const { data } = await api.post("/user", body);
+
     setUser(data);
 
     return data;
@@ -34,7 +35,6 @@ export async function vote({ id, body }) {
   }
   export async function getRoom(code) {
     const { data } = await api.get(`/room/${code}`);
-    console.log(data);
     return data;
   }
   
@@ -51,6 +51,12 @@ export async function vote({ id, body }) {
   
   export async function addUser({ code, idUser }) {
     const { data } = await api.put(`/room/addUser/${code}`, {"users":[idUser]});
+  
+    return data;
+  }
+
+  export async function showVotes({ code, state }) {
+    const { data } = await api.put(`/room/${code}`, {"show":[state]});
   
     return data;
   }

@@ -3,7 +3,8 @@ import {
   getRoom,
   deleteRoom,
   addUser,
-  createRoom
+  createRoom,
+  showVotes
 } from "../../services/endpoints";
 
 export function useGetRoom({
@@ -16,6 +17,7 @@ export function useGetRoom({
     queryFn: () => getRoom(code),
     onSuccess,
     onError,
+    
   });
 }
 
@@ -35,6 +37,17 @@ export function useAddUser({
 } = {}) {
   return useMutation({
     mutationFn: addUser,
+    onSuccess,
+    onError,
+  });
+}
+
+export function useShowVotes({
+  onSuccess = () => {},
+  onError = (err) => console.error(err),
+} = {}) {
+  return useMutation({
+    mutationFn: showVotes,
     onSuccess,
     onError,
   });

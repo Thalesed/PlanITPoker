@@ -31,7 +31,8 @@ export default function CreateRoomModel({ modalDisplay, closeModal }) {
       
       createRoom({
         "name":roomName,
-        "users":[userID]
+        "users":[userID],
+        "show": false,
       });
       
     }

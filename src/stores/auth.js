@@ -1,7 +1,8 @@
 import { create } from "zustand";
+import { persist } from 'zustand/middleware';
 
 const useAuthStore = create(
-  (set, get) => ({
+  persist( (set, get) => ({
     auth: null,
     setAuth: (accessToken) => {
       const { user, exp, iat } = jwtDecode(accessToken);
@@ -19,7 +20,9 @@ const useAuthStore = create(
   }),
   {
     name: "AuthData",
+    getStorage: () => localStorage,
   }
+  )
 );
 
 export default useAuthStore;

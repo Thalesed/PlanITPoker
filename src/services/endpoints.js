@@ -12,11 +12,12 @@ export async function deleteUser(_id) {
   return data;
 }
 export async function createUser(body) {
-    const { setUser } = useAuthStore.getState();
-
+    
+    const { setAuth } = useAuthStore.getState();
+  
     const { data } = await api.post("/user", body);
-
-    setUser(data);
+    setAuth(data.accessToken);
+    
 
     return data;
 }
@@ -56,7 +57,7 @@ export async function vote({ id, body }) {
   }
 
   export async function showVotes({ code, state }) {
-    const { data } = await api.put(`/room/${code}`, {"show":[state]});
+    const { data } = await api.put(`/room/${code}`, {"show": state });
   
     return data;
   }

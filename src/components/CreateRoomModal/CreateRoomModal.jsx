@@ -45,7 +45,7 @@ export default function CreateRoomModel({ modalDisplay, closeModal }) {
         <Instruction> Nome da Sala</Instruction>
         <LoginTextSpace id="room-name" placeHolder={"ROOM NAME"}></LoginTextSpace>
         <Instruction> Limite de membros</Instruction>
-        <NumberInput type="number" defaultValue="10"></NumberInput>
+        <NumberInput type="number" defaultValue="10" min="1" max="16"></NumberInput>
         <LoginButton text={"CRIAR"} onClickFunction={doCreateRoom}></LoginButton>
     </ModelContainer>
   );

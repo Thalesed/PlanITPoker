@@ -1,28 +1,49 @@
 import { create } from "zustand";
-import { persist } from 'zustand/middleware';
+import { jwtDecode } from "jwt-decode";
 
-const useAuthStore = create(
-  persist( (set, get) => ({
-    auth: null,
+const useAuthStore = create((set) => {
+  const loadAuthFromLocalStorage = () => {
+    const savedAuth = localStorage.getItem('auth');
+    if (savedAuth) {
+      return JSON.parse(savedAuth);
+    }
+    return null;
+  };
+
+  const saveAuthToLocalStorage = (auth) => {
+    localStorage.setItem('auth', JSON.stringify(auth));
+  };
+
+  return {
+    auth: loadAuthFromLocalStorage(),
     setAuth: (accessToken) => {
-      const { user, exp, iat } = jwtDecode(accessToken);
+      const { user, iat: issuedAtTimestamp, exp: expireAtTimestamp } = jwtDecode(accessToken);
+      
+      const secureTime = 5 * 60;
+      const expireIn = expireAtTimestamp - issuedAtTimestamp - secureTime;
 
-      set({ auth: { accessToken, user, expireIn: exp - iat } });
+      const newAuth = {
+        accessToken,
+        user,
+        expireIn,
+      };
+
+      saveAuthToLocalStorage(newAuth);
+
+      set({ auth: newAuth });
     },
-    getToken: () => {
-      return get().auth?.accessToken;
+    
+    setUser: (user) => set((state) => {
+      const newAuth = { ...state.auth, user };
+      saveAuthToLocalStorage(newAuth);
+      return { auth: newAuth };
+    }),
+
+    clearAuth: () => {
+      localStorage.removeItem('auth');
+      set({ auth: null });
     },
-    setUser: (user) =>
-      set((state) => ({
-        auth: { ...state?.auth, user },
-      })),
-    clearAuth: () => set({ auth: null }),
-  }),
-  {
-    name: "AuthData",
-    getStorage: () => localStorage,
-  }
-  )
-);
+  };
+});
 
 export default useAuthStore;

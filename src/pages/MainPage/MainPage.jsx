@@ -29,14 +29,10 @@ export default function MainPage() {
 
   const [canShow, setCanShow] = useState(false);
   const [canShowText, setCanShowText] = useState("Show");
-
-  useEffect(() => {
-  console.log('Auth Store:', useAuthStore.getState().auth);
-}, []);
-
+  const [room, setRoom] = useState(null);
 
   const {
-    data: room,
+    data: getRoom,
     isLoading: isRoomLoading,
     isSuccess,
     isError,
@@ -143,7 +139,9 @@ export default function MainPage() {
 
 
   useEffect(() => {
+    setRoom(getRoom);
     if (isSuccess && room) {
+      refetch();
       generateFibonacci();
       setUsers(room?.users);
       setLeft(room.users.slice(0, 3));
@@ -159,24 +157,28 @@ export default function MainPage() {
     if (isError) {
       setErrorText("Impossível conectar à sala");
     }
-  }, [isRoomLoading, isSuccess, isError, room]);
+  }, [isRoomLoading, isSuccess, isError, room, canShow]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      refetch();
-
+      refetch().then(() => {
+        setRoom(getRoom);
+      });
+      
       if(room){
-        setLeft(room.users.slice(0, 3));
-        setTop(room.users.slice(3, 9));
-        setRight(room.users.slice(9, 12));
-        setBottom(room.users.slice(12));
-        calculateAverageVote();
-        calculateMedianVote();
-        calculateModeVote();
-        setCanShow(room.show);
-        console.log(room.show);
+        refetch().then(() => {
+          setLeft(room.users.slice(0, 3));
+          setTop(room.users.slice(3, 9));
+          setRight(room.users.slice(9, 12));
+          setBottom(room.users.slice(12));
+          calculateAverageVote();
+          calculateMedianVote();
+          calculateModeVote();
+          setCanShow(room.show);
+        });
       }
-    }, 3000);
+      
+    }, 900);
   
     return () => clearInterval(interval);
   }, []);
@@ -198,7 +200,9 @@ export default function MainPage() {
     setUsers(room?.users);
     vote({id: userID, body: {"vote": num}});
     
-    refetch();
+    refetch().then(()=>{
+      setRoom(getRoom);
+    })
   }
 
   return (
@@ -277,7 +281,12 @@ export default function MainPage() {
         <Card number={value} key={index} id="number-card" onClickFunction={() => {doVote(value)}}/>
       ))} 
       { userType &&
-      <ManageButton text={canShowText} onClickFunction={() => {showVotes({code: code, state: !canShow}); setCanShow((prevState) => !prevState); setCanShowText((prevState) => prevState === "Show" ? "Hide" : "Show");} }/>
+      <ManageButton text={canShowText} onClickFunction={() => {
+        showVotes({code: code, state: !canShow});
+        setCanShow((prevState) => !prevState);
+        setCanShowText((prevState) => prevState === "Show" ? "Hide" : "Show");
+        refetch();
+      } }/>
       }
       </ContainerCards>
     </>

@@ -45,8 +45,6 @@ export default function LoginPage() {
       <EnterRoomModal id="enter-room" modalDisplay={isEnterModalVisible ? "flex" : "none" } closeModal={() => { setIsEnterModalVisible(false) }}/>
       <Instruction>Nome *</Instruction>
       <LoginTextSpace id={"user-name"} placeHolder={"Thales"} />
-      <Instruction>Status</Instruction>
-      <LoginTextSpace id={"user-status"} placeHolder={"Melhor Consultor"} />
       <LoginButton text="Criar nova sala" onClickFunction={toggleCreateModal} />
       <LoginButton text="Entrar em sala existente" onClickFunction={toggleEnterModal} />
     </LoginContainer>

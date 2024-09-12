@@ -15,6 +15,7 @@ export default function EnterRoomModel({ modalDisplay, closeModal }) {
   const userID = useAuthStore((state) => state?.auth?.user?._id);
   const navigate = useNavigate();
   const [code, setCode] = useState(null);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   function getCode(){
     const theCode = document.getElementById("room-code").value;
@@ -37,14 +38,11 @@ export default function EnterRoomModel({ modalDisplay, closeModal }) {
   });
 
   const { mutate: addUser } = useAddUser({
+    onSuccess: () => {
+      
+    },
     onError: (err) => {
       console.log(err);
-    },
-    onSuccess: () => {
-      console.log("usuario adicionado!! #######");
-      refetch().then(() => {
-        navigate(`/room/${room.code}`);
-      });
     },
   });
   
@@ -54,7 +52,10 @@ export default function EnterRoomModel({ modalDisplay, closeModal }) {
     } else if (!room) {
       setErrorText("Não foi possível encontrar a sala");
     } else {
-        addUser({ code: room.code, idUser: userID });
+      addUser({ code: room.code, idUser: userID });
+      refetch().then(() => {
+        navigate(`/room/${room.code}`);
+      });
     }
   }
   
@@ -65,7 +66,7 @@ export default function EnterRoomModel({ modalDisplay, closeModal }) {
         <CloseX onClick={closeModal}>X</CloseX>
         <Instruction> Código da Sala</Instruction>
         <LoginTextSpace id="room-code" placeHolder={"ROOM CODE"} onChangeFunction={getCode} ></LoginTextSpace>
-        <LoginButton text={"ENTRAR"} onClickFunction={enterRoom}></LoginButton>
+        <LoginButton text={"ENTRAR"} onClickFunction={() => {enterRoom(); } }></LoginButton>
     </ModelContainer>
   );
 }

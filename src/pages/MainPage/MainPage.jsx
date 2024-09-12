@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Table, Card, CardUser, ManageButton } from "../../components";
-import { ContainerCards, LeftCards, RightCards, Link, Text, CodeLabel, TheTableContainer, LeftTable, TopTable, RightTable, BottomTable} from "./Styles";
+import { ContainerCards, LeftCards, RightCards, Link, Text, CodeLabel, TheTableContainer, LeftTable, TopTable, RightTable, BottomTable, NameLabel} from "./Styles";
 import { useParams } from 'react-router-dom';
 import { useGetRoom, useShowVotes } from "../../hooks/querys/room";
 import { useGetUsers, useVote } from "../../hooks/querys/user";
@@ -19,6 +19,7 @@ export default function MainPage() {
   const [right, setRight] = useState([]);
   const [top, setTop] = useState([]);
   const [bottom, setBottom] = useState([]);
+  const [roomName, setRoomName] = useState(null);
 
   const cardSuits = [
     '\u{2660}', 
@@ -44,8 +45,12 @@ export default function MainPage() {
       console.log("Erro ao buscar a sala:", err);
       navigate("/");
     },
-    refetchInterval: 5000, 
-    refetchOnWindowFocus: true,
+    onSuccess: () => {
+      if(room?.users){
+        setUsers(room.users);
+      }
+    },
+    refetchInterval: 0, 
     staleTime: 0,
   });
 
@@ -137,17 +142,22 @@ export default function MainPage() {
     }
 }
 
-
-  useEffect(() => {
-    setRoom(getRoom);
+function updateData(){
+  if(room?.users){
+    setUsers(room.users);
+  }
+  refetch().then(() =>{
+      setRoom(getRoom);
+  
     if (isSuccess && room) {
-      refetch();
       generateFibonacci();
-      setUsers(room?.users);
-      setLeft(room.users.slice(0, 3));
-      setTop(room.users.slice(3, 9));
-      setRight(room.users.slice(9, 12));
-      setBottom(room.users.slice(12));
+      if(room.users){
+        setUsers(room.users);
+      }
+      setLeft(users.slice(0, 3));
+      setTop(users.slice(3, 9));
+      setRight(users.slice(9, 12));
+      setBottom(users.slice(12));
       calculateAverageVote();
       calculateMedianVote();
       calculateModeVote();
@@ -157,33 +167,44 @@ export default function MainPage() {
     if (isError) {
       setErrorText("Impossível conectar à sala");
     }
-  }, [isRoomLoading, isSuccess, isError, room, canShow]);
+
+    });
+  }
+  
 
   useEffect(() => {
+    if(room){
+      setUsers(room.users);
+    }
+    updateData();
+    if(!roomName){
+      setRoomName(room?.name);
+    }
+
+  }, [isRoomLoading, room]);
+
+  useEffect(() => {
+    
     const interval = setInterval(() => {
-      refetch().then(() => {
-        setRoom(getRoom);
-      });
-      
-      if(room){
-        refetch().then(() => {
-          setLeft(room.users.slice(0, 3));
-          setTop(room.users.slice(3, 9));
-          setRight(room.users.slice(9, 12));
-          setBottom(room.users.slice(12));
-          calculateAverageVote();
-          calculateMedianVote();
-          calculateModeVote();
-          setCanShow(room.show);
-        });
-      }
-      
-    }, 900);
-  
+      refetch();
+      updateData();
+    }, 400);
+    
+    
     return () => clearInterval(interval);
   }, []);
-  
 
+  useEffect(() => {
+    
+    const interval = setInterval(() => {
+      if(!(room?.users)){
+        window.location.reload();
+      }      
+      }, 5500);
+    
+    
+    return () => clearInterval(interval);
+  }, []);
 
   function generateFibonacci() {
     const fibSequence = [0, 1];
@@ -200,14 +221,13 @@ export default function MainPage() {
     setUsers(room?.users);
     vote({id: userID, body: {"vote": num}});
     
-    refetch().then(()=>{
-      setRoom(getRoom);
-    })
+    updateData();
   }
 
   return (
     <>
     <ErrorBox text={ errorText } modalDisplay={ errorText ? "flex" : "none" } closeModal={() => { setErrorText(null) ; navigate("/");}}></ErrorBox>
+    <NameLabel>Sala: { roomName }</NameLabel>
     <CodeLabel>Código: { code }</CodeLabel>
     <LeftCards>
       <Link href={"https://www.notion.so/notioncpe/Vote-consciente-PlanITpoker-51e9e707248e41938de22d8948afa4b5?pvs=4"}>Vote consciente</Link>
@@ -235,9 +255,9 @@ export default function MainPage() {
               {left && 
               left.map((user, index) => (
                 canShow ? (
-                <CardUser name={user.name} num={user.vote}/>
+                <CardUser name={user.name} num={user.vote} key={index}/>
                 ) :( 
-                <CardUser name={user.name} num={cardSuits[index] }/>
+                <CardUser name={user.name} num={cardSuits[index] }key={index}/>
                 )
               )) }
             </LeftTable>
@@ -245,28 +265,28 @@ export default function MainPage() {
             <TopTable>
             {top && top.map((user, index) => (
               canShow ? (
-              <CardUser name={user.name} num={user.vote}/>
+              <CardUser name={user.name} num={user.vote} key={index}/>
               )
               :(
-                <CardUser name={user.name} num={cardSuits[index]} />
+                <CardUser name={user.name} num={cardSuits[index]} key={index}/>
               )
               ))}
             </TopTable>
             <RightTable>
             {right && right.map((user, index) => (
               canShow ? (
-              <CardUser name={user.name} num={user.vote} />
+              <CardUser name={user.name} num={user.vote} key={index}/>
               ):(
-                <CardUser name={user.name} num={cardSuits[index]} />
+                <CardUser name={user.name} num={cardSuits[index]} key={index}/>
               )
               ))}
             </RightTable>
             <BottomTable>
             {bottom && bottom.map((user, index) => (
               canShow ? (
-              <CardUser name={user.name} num={user.vote}/>
+              <CardUser name={user.name} num={user.vote} key={index}/>
               ):(
-              <CardUser name={user.name} num={cardSuits[index]} />
+              <CardUser name={user.name} num={cardSuits[index]} key={index}/>
               )
               ))}
             </BottomTable>
@@ -285,7 +305,7 @@ export default function MainPage() {
         showVotes({code: code, state: !canShow});
         setCanShow((prevState) => !prevState);
         setCanShowText((prevState) => prevState === "Show" ? "Hide" : "Show");
-        refetch();
+        updateData();
       } }/>
       }
       </ContainerCards>

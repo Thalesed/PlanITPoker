@@ -66,12 +66,23 @@ export const Text = styled.p`
 
 `
 
-export const CodeLabel = styled.h2`
+export const NameLabel = styled.h1`
     color: #D7D7D7;
     display: flex;
     justify-content: center; 
     margin: 0 auto;
     text-align: center; 
+    font-size: 1.5em;
+    margin-bottom: 25px;
+`;
+
+export const CodeLabel = styled.h2`
+    color: #D7D7D7;
+    display: flex;
+    justify-content: center; 
+    margin: 0 auto;
+    text-align: center;
+    font-size: 1.3em; 
 `;
 
 export const TheTableContainer = styled.div`

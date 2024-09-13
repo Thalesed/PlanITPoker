@@ -35,19 +35,29 @@ export default function MainPage() {
   const {
     data: getRoom,
     isLoading: isRoomLoading,
-    isSuccess,
-    isError,
-    error,
-    refetch,
+    isError: isRoomError,
   } = useGetRoom({
     code,
     onError: (err) => {
       console.log("Erro ao buscar a sala:", err);
       navigate("/");
     },
-    onSuccess: () => {
-      if(room?.users){
-        setUsers(room.users);
+    onSuccess: (data) => {
+      setRoom(data);  
+      if(data?.users){
+        console.log("AAHAHAH")
+        setUsers(data.users);
+        setLeft(users.slice(0, 3));
+        setTop(users.slice(3, 9));
+        setRight(users.slice(9, 12));
+        setBottom(users.slice(12));
+        calculateAverageVote();
+        calculateMedianVote();
+        calculateModeVote();
+        setCanShow(room.show);
+      }
+      if(!roomName){
+        setRoomName(room?.name);
       }
     },
     refetchInterval: 0, 
@@ -141,93 +151,50 @@ export default function MainPage() {
         }
     }
 }
+function generateFibonacci() {
+  const fibSequence = [0, 1];
 
-function updateData(){
-  if(room?.users){
-    setUsers(room.users);
-  }
-  refetch().then(() =>{
-      setRoom(getRoom);
-  
-    if (isSuccess && room) {
-      generateFibonacci();
-      if(room.users){
-        setUsers(room.users);
-      }
-      setLeft(users.slice(0, 3));
-      setTop(users.slice(3, 9));
-      setRight(users.slice(9, 12));
-      setBottom(users.slice(12));
-      calculateAverageVote();
-      calculateMedianVote();
-      calculateModeVote();
-      setCanShow(room.show);
-    }
-
-    if (isError) {
-      setErrorText("Impossível conectar à sala");
-    }
-
-    });
+  for (let i = 2; i < 12; i++) {
+      const nextNumber = fibSequence[i - 1] + fibSequence[i - 2];
+      fibSequence.push(nextNumber);
   }
   
-
-  useEffect(() => {
-    if(room){
-      setUsers(room.users);
-    }
-    updateData();
-    if(!roomName){
-      setRoomName(room?.name);
-    }
-
-  }, [isRoomLoading, room]);
-
-  useEffect(() => {
-    
-    const interval = setInterval(() => {
-      refetch();
-      updateData();
-    }, 400);
-    
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    
-    const interval = setInterval(() => {
-      if(!(room?.users)){
-        window.location.reload();
-      }      
-      }, 5500);
-    
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  function generateFibonacci() {
-    const fibSequence = [0, 1];
-
-    for (let i = 2; i < 12; i++) {
-        const nextNumber = fibSequence[i - 1] + fibSequence[i - 2];
-        fibSequence.push(nextNumber);
-    }
-    
-    setFibonacci(fibSequence);
-  }
+  setFibonacci(fibSequence);
+}
 
   function doVote(num){
-    setUsers(room?.users);
     vote({id: userID, body: {"vote": num}});
-    
-    updateData();
   }
+  
+  useEffect(() => {
+    setLeft(getRoom?.users.slice(0, 3));
+    setTop(getRoom?.users.slice(3, 9));
+    setRight(getRoom?.users.slice(9, 12));
+    setBottom(getRoom?.users.slice(12));
+    calculateAverageVote();
+    calculateMedianVote();
+    calculateModeVote();
+    setCanShow(getRoom?.show);
+    if (isRoomError) {
+      setErrorText("Impossível conectar à sala");
+    }
+    
+  }, [getRoom, isRoomLoading]);
+
+  useEffect(() => {
+    
+    generateFibonacci();
+  }, []);
 
   return (
     <>
     <ErrorBox text={ errorText } modalDisplay={ errorText ? "flex" : "none" } closeModal={() => { setErrorText(null) ; navigate("/");}}></ErrorBox>
-    <NameLabel>Sala: { roomName }</NameLabel>
+    
+    {isRoomLoading ? (
+       <p>
+        Room Loading
+      </p>) : ( <>
+    <NameLabel>Sala: { getRoom?.name }</NameLabel>
     <CodeLabel>Código: { code }</CodeLabel>
     <LeftCards>
       <Link href={"https://www.notion.so/notioncpe/Vote-consciente-PlanITpoker-51e9e707248e41938de22d8948afa4b5?pvs=4"}>Vote consciente</Link>
@@ -257,7 +224,7 @@ function updateData(){
                 canShow ? (
                 <CardUser name={user.name} num={user.vote} key={index}/>
                 ) :( 
-                <CardUser name={user.name} num={cardSuits[index] }key={index}/>
+                <CardUser name={user.name} num={cardSuits[index % 4] }key={index}/>
                 )
               )) }
             </LeftTable>
@@ -268,7 +235,7 @@ function updateData(){
               <CardUser name={user.name} num={user.vote} key={index}/>
               )
               :(
-                <CardUser name={user.name} num={cardSuits[index]} key={index}/>
+                <CardUser name={user.name} num={cardSuits[index % 4]} key={index}/>
               )
               ))}
             </TopTable>
@@ -277,7 +244,7 @@ function updateData(){
               canShow ? (
               <CardUser name={user.name} num={user.vote} key={index}/>
               ):(
-                <CardUser name={user.name} num={cardSuits[index]} key={index}/>
+                <CardUser name={user.name} num={cardSuits[index% 4]} key={index}/>
               )
               ))}
             </RightTable>
@@ -286,13 +253,13 @@ function updateData(){
               canShow ? (
               <CardUser name={user.name} num={user.vote} key={index}/>
               ):(
-              <CardUser name={user.name} num={cardSuits[index]} key={index}/>
+              <CardUser name={user.name} num={cardSuits[index% 4]} key={index}/>
               )
               ))}
             </BottomTable>
           </TheTableContainer>
 
-      
+            </> ) }
       
       <ContainerCards>
       

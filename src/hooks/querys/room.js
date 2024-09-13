@@ -17,6 +17,7 @@ export function useGetRoom({
     queryFn: () => getRoom(code),
     onSuccess,
     onError,
+    refetchInterval: 300,
     
   });
 }

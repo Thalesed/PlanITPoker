@@ -5,7 +5,11 @@ export default function Card({ name, num }) {
   return (
     <CardContainer>
       <UserNameP>{name}</UserNameP>
-      <UserCard>{num}</UserCard>
+      {num < 0 ? (
+      <UserCard>  </UserCard>
+      ) : (
+        <UserCard> {num} </UserCard>
+      )}
     </CardContainer>
   );
 }

@@ -70,7 +70,7 @@ export default function MainPage() {
       let count = 0;
     
       getRoom.users.forEach(user => {
-        if (user.vote !== undefined && user.vote !== null) {
+        if (user.vote !== undefined && user.vote !== null && user.vote >= 0) {
           totalVotes += user.vote;
           count += 1;
         }
@@ -84,7 +84,7 @@ export default function MainPage() {
     if (getRoom) {
         const votes = getRoom.users
             .map(user => user.vote)
-            .filter(vote => vote !== undefined && vote !== null); 
+            .filter(vote => vote !== undefined && vote !== null && vote >= 0); 
 
         if (votes.length === 0) {
             setMode(null); 
@@ -112,7 +112,7 @@ export default function MainPage() {
     if (getRoom) {
         const votes = getRoom.users
             .map(user => user.vote)
-            .filter(vote => vote !== undefined && vote !== null); 
+            .filter(vote => vote !== undefined && vote !== null && vote >= 0); 
 
         if (votes.length === 0) {
             setMedian(0); 
@@ -131,9 +131,9 @@ export default function MainPage() {
     }
 }
 function generateFibonacci() {
-  const fibSequence = [0, 1];
+  const fibSequence = [0, 1, 2];
 
-  for (let i = 2; i < 12; i++) {
+  for (let i = 3; i < 12; i++) {
       const nextNumber = fibSequence[i - 1] + fibSequence[i - 2];
       fibSequence.push(nextNumber);
   }
@@ -159,6 +159,17 @@ function generateFibonacci() {
     }
     
   }, [getRoom, isRoomLoading]);
+
+  useEffect(() => {
+    if(!canShow){
+      doVote(-1);
+      const numberCards = document.querySelectorAll(".number-card");
+      numberCards.forEach((card) => {
+        card.style.backgroundColor = "#222222";
+        card.style.color = "gold";
+      });
+    }
+  }, [canShow]);
 
   useEffect(() => {
     
@@ -251,7 +262,7 @@ function generateFibonacci() {
       <ManageButton text={canShowText} onClickFunction={() => {
         showVotes({code: code, state: !canShow});
         setCanShow((prevState) => !prevState);
-        setCanShowText((prevState) => prevState === "Show" ? "Hide" : "Show");
+        setCanShowText(() => canShow ? "Show" : "Hide");
       } }/>
       </ContainerCards>
     </>

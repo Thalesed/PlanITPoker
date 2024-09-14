@@ -23,7 +23,6 @@ export default function EnterRoomModal({ modalDisplay, closeModal }) {
 
   const {
     data: room,
-    isLoading: isRoomLoading,
   } = useGetRoom({
     code,
     onError: (err) => {

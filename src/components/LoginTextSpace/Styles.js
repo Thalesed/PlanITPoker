@@ -13,8 +13,32 @@ export const Space = styled.input`
     letter-spacing: 2px;
     font-size: 1.3em;
 
-    &:focus{
+    &:focus {
         border: solid 2px gold;
         border-color: gold;
     }
-`
+
+    @media (max-width: 1024px) {
+        font-size: 1.2em;
+        padding: 8px;
+        min-width: 180px;
+    }
+
+    @media (max-width: 768px) {
+        font-size: 1.1em;
+        padding: 7px;
+        width: 160px;
+    }
+
+    @media (max-width: 480px) {
+        font-size: 1em;
+        padding: 6px;
+        width: 140px;
+    }
+
+    @media (max-width: 320px) {
+        font-size: 0.9em;
+        padding: 5px;
+        width: 120px;
+    }
+`;

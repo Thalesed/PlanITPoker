@@ -3,7 +3,7 @@ import { Table, Card, CardUser, ManageButton } from "../../components";
 import { ContainerCards, LeftCards, RightCards, Link, Text, CodeLabel, TheTableContainer, LeftTable, TopTable, RightTable, BottomTable, NameLabel} from "./Styles";
 import { useParams } from 'react-router-dom';
 import { useGetRoom, useShowVotes } from "../../hooks/querys/room";
-import { useGetUsers, useVote } from "../../hooks/querys/user";
+import { useVote } from "../../hooks/querys/user";
 import ErrorBox from "../../components/ErrorBox/ErrorBox";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../../stores/auth";
@@ -11,7 +11,6 @@ import useAuthStore from "../../stores/auth";
 export default function MainPage() {
   const [errorText, setErrorText] = useState(null);
   const [fibonacci, setFibonacci] = useState([0, 1, 2, 3, 4, 5]);
-  const userType = useAuthStore((state) => state?.auth?.user?.type);
   const userID = useAuthStore((state) => state?.auth?.user?._id);
   const { code } = useParams();
   const navigate = useNavigate();
@@ -19,7 +18,6 @@ export default function MainPage() {
   const [right, setRight] = useState([]);
   const [top, setTop] = useState([]);
   const [bottom, setBottom] = useState([]);
-  const [roomName, setRoomName] = useState(null);
 
   const cardSuits = [
     '\u{2660}', 
@@ -30,7 +28,6 @@ export default function MainPage() {
 
   const [canShow, setCanShow] = useState(false);
   const [canShowText, setCanShowText] = useState("Show");
-  const [room, setRoom] = useState(null);
 
   const {
     data: getRoom,
@@ -42,23 +39,7 @@ export default function MainPage() {
       console.log("Erro ao buscar a sala:", err);
       navigate("/");
     },
-    onSuccess: (data) => {
-      setRoom(data);  
-      if(data?.users){
-        console.log("AAHAHAH")
-        setUsers(data.users);
-        setLeft(users.slice(0, 3));
-        setTop(users.slice(3, 9));
-        setRight(users.slice(9, 12));
-        setBottom(users.slice(12));
-        calculateAverageVote();
-        calculateMedianVote();
-        calculateModeVote();
-        setCanShow(room.show);
-      }
-      if(!roomName){
-        setRoomName(room?.name);
-      }
+    onSuccess: () => {
     },
     refetchInterval: 0, 
     staleTime: 0,
@@ -79,31 +60,29 @@ export default function MainPage() {
     onSuccess: () => {
     },
   });
-
-  const [users, setUsers] = useState(null);
   const [avarage, setAvarage] = useState(0);
   const [median, setMedian] = useState(0);
   const [mode, setMode] = useState(0);
 
   function calculateAverageVote() {
-    if(room){
+    if(getRoom){
       let totalVotes = 0;
       let count = 0;
     
-      room.users.forEach(user => {
+      getRoom.users.forEach(user => {
         if (user.vote !== undefined && user.vote !== null) {
           totalVotes += user.vote;
           count += 1;
         }
       });
-      setAvarage(totalVotes / count);
+      setAvarage((totalVotes / count).toFixed(2));
   }
   
   }
 
   function calculateModeVote() {
-    if (room) {
-        const votes = room.users
+    if (getRoom) {
+        const votes = getRoom.users
             .map(user => user.vote)
             .filter(vote => vote !== undefined && vote !== null); 
 
@@ -130,8 +109,8 @@ export default function MainPage() {
 
 
   function calculateMedianVote() {
-    if (room) {
-        const votes = room.users
+    if (getRoom) {
+        const votes = getRoom.users
             .map(user => user.vote)
             .filter(vote => vote !== undefined && vote !== null); 
 
@@ -228,7 +207,7 @@ function generateFibonacci() {
                 )
               )) }
             </LeftTable>
-            <Table />
+           
             <TopTable>
             {top && top.map((user, index) => (
               canShow ? (
@@ -239,6 +218,7 @@ function generateFibonacci() {
               )
               ))}
             </TopTable>
+            <Table />
             <RightTable>
             {right && right.map((user, index) => (
               canShow ? (
@@ -267,14 +247,12 @@ function generateFibonacci() {
       (
         <Card number={value} key={index} id="number-card" onClickFunction={() => {doVote(value)}}/>
       ))} 
-      { userType &&
+      
       <ManageButton text={canShowText} onClickFunction={() => {
         showVotes({code: code, state: !canShow});
         setCanShow((prevState) => !prevState);
         setCanShowText((prevState) => prevState === "Show" ? "Hide" : "Show");
-        updateData();
       } }/>
-      }
       </ContainerCards>
     </>
   );

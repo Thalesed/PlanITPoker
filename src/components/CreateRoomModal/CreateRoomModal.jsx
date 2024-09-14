@@ -1,3 +1,4 @@
+import PropTypes from "prop-types";
 import LoginButton from "../LoginButton/LoginButton";
 import LoginTextSpace from "../LoginTextSpace/LoginTextSpace";
 import ErrorBox from "../ErrorBox/ErrorBox";
@@ -9,7 +10,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function CreateRoomModel({ modalDisplay, closeModal }) {
-
   const [errorText, setErrorText] = useState(null);
   const userID = useAuthStore((state) => state?.auth?.user?._id);
   const navigate = useNavigate();
@@ -21,32 +21,42 @@ export default function CreateRoomModel({ modalDisplay, closeModal }) {
     onError: (err) => setErrorText(err),
   });
 
-  function doCreateRoom(){
-    
+  function doCreateRoom() {
     const roomName = document.getElementById("room-name").value;
-    if(!roomName && roomName === ""){
+    const max = parseInt(document.getElementById("max-users").value, 10);
+    console.log(max);
+    if (!roomName || roomName === "") {
       setErrorText("Nome da sala não pode estar vazio");
-    }
-    else{
-      
+    } else {
       createRoom({
-        "name":roomName,
-        "users":[userID],
-        "show": false,
+        name: roomName,
+        users: [userID],
+        show: false,
+        maxUsers: max,
       });
-      
     }
   }
-  
+
   return (
-    <ModelContainer style={{display: modalDisplay}}>
-      <ErrorBox text={ errorText } modalDisplay={ errorText ? "flex" : "none" } closeModal={() => { setErrorText(null) }}></ErrorBox>
-        <CloseX onClick={closeModal}>X</CloseX>
-        <Instruction> Nome da Sala</Instruction>
-        <LoginTextSpace id="room-name" placeHolder={"ROOM NAME"}></LoginTextSpace>
-        <Instruction> Limite de membros</Instruction>
-        <NumberInput type="number" defaultValue="10" min="1" max="16"></NumberInput>
-        <LoginButton text={"CRIAR"} onClickFunction={doCreateRoom}></LoginButton>
+    <ModelContainer style={{ display: modalDisplay }}>
+      <ErrorBox
+        text={errorText}
+        modalDisplay={errorText ? "flex" : "none"}
+        closeModal={() => {
+          setErrorText(null);
+        }}
+      />
+      <CloseX onClick={closeModal}>X</CloseX>
+      <Instruction>Nome da Sala</Instruction>
+      <LoginTextSpace id="room-name" placeHolder={"ROOM NAME"} />
+      <Instruction>Limite de membros</Instruction>
+      <NumberInput id="max-users" type="number" defaultValue="10" min="1" max="18" />
+      <LoginButton text={"CRIAR"} onClickFunction={doCreateRoom} />
     </ModelContainer>
   );
 }
+
+CreateRoomModel.propTypes = {
+  modalDisplay: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  closeModal: PropTypes.func.isRequired,
+};

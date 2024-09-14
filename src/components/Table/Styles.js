@@ -1,22 +1,21 @@
 import styled from "styled-components";
 
 export const TableContainer = styled.div`
-  background-color: #2A2A2A;
+position: relativ;
+ background-color: #2A2A2A;
   border: solid 1px gold;
   border-radius: 10px;
-  width: 100%;
-  max-width: 810px; 
-  height: auto;
-  min-height: 300px;
+  width: 810px;
+  height: 300px;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
-  padding: 20px;
 
   @media (max-width: 768px) {
     max-width: 60%;
     padding: 15px;
+    height: 380px;
   }
 
   @media (max-width: 480px) {

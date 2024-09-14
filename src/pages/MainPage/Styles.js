@@ -9,7 +9,7 @@ export const ContainerCards = styled.div`
     margin-top: 180px;
 
     @media (max-width: 768px) {
-        margin-top: 12px;
+        margin-top: 140px;
         flex-direction: row;
     }
 `;
@@ -18,8 +18,11 @@ export const LeftCards = styled.div`
     display: flex;
     flex-direction: column;
     text-align: center;
+    self-align: left;
     justify-content: center;
-    width: 10%;
+    float: left;
+    left: 0;
+    width: 10%;   
     margin-top: 50px;
     background-color: #262626;
     color: gold;
@@ -37,12 +40,15 @@ export const LeftCards = styled.div`
 
 export const RightCards = styled.div`
     display: flex;
-    flex-direction: column;
     text-align: center;
+    self-align: right;
     justify-content: center;
-    width: 10%;
+    float: right;
+    right: 0;
+    flex-direction: column; 
+    width: 10%;   
     margin-top: 50px;
-    background-color: #262626;
+    background-color: 262626;
     color: gold;
     margin: 15px;
     font-family: 'Orbitron', sans-serif;
@@ -123,7 +129,6 @@ export const TheTableContainer = styled.div`
         flex-direction: column;
     }
 `;
-
 export const LeftTable = styled.div`
     display: flex;
     flex-direction: column;
@@ -136,16 +141,22 @@ export const LeftTable = styled.div`
     top: 0;
 
     @media (max-width: 768px) {
-        position: static;
+        position: absolute;
         flex-direction: row;
-        width: 100%;
-        justify-content: space-around;
+        top: -16%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        margin-bottom: 36px;
         height: auto;
     }
+
+    
 `;
 
 export const TopTable = styled.div`
     display: flex;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -154,10 +165,16 @@ export const TopTable = styled.div`
     top: 0;
     left: 0;
     transform: translateY(-75%);
+    margin-bottom: 20px;
 
     @media (max-width: 768px) {
-        position: static;
-        transform: none;
+        position: absolute;
+        flex-direction: column;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 31px;
+        height: 60%;
     }
 `;
 
@@ -173,12 +190,16 @@ export const RightTable = styled.div`
     top: 0;
 
     @media (max-width: 768px) {
-        position: static;
+        position: absolute;
         flex-direction: row;
-        width: 100%;
-        justify-content: space-around;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        margin-top: 4px;
         height: auto;
     }
+    
 `;
 
 export const BottomTable = styled.div`
@@ -193,7 +214,14 @@ export const BottomTable = styled.div`
     transform: translateY(60%);
 
     @media (max-width: 768px) {
-        position: static;
-        transform: none;
+        position: absolute;
+        flex-direction: column;
+        left: 84%;
+        top: 50%;
+        transform: translateY(-50%);
+        width: auto;
+        height: 50%;
     }
+
+    
 `;

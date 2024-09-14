@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 export const CardContainer = styled.div`
+  position: relativ;
   width: 50px;
   height: 30px;
   text-align: center;
@@ -14,13 +15,14 @@ export const CardContainer = styled.div`
   @media (max-width: 768px) {
     width: 40px;
     height: 25px;
-    margin: 25px;
+    margin: 35px;
   }
 
   @media (max-width: 480px) {
     width: 30px;
     height: 20px;
     margin: 15px;
+    margin-top: 25px;
   }
 `;
 
@@ -36,6 +38,7 @@ export const UserCard = styled.div`
   color: #FFFFFF;
   font-size: 1.2em;
   font-weight: bold;
+  position: relativ;
 
   @media (max-width: 768px) {
     min-height: 40px;
@@ -56,9 +59,11 @@ export const UserNameP = styled.p`
   text-align: center;
   margin: 0;
   margin-bottom: 6px;
+  position: relativ;
 
   @media (max-width: 768px) {
     font-size: 0.9em;
+    margin: 10px;
   }
 
   @media (max-width: 480px) {

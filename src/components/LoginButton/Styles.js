@@ -16,11 +16,35 @@ export const Button = styled.button`
     cursor: pointer;
     transition: transform 0.2s ease-in-out;
     font-family: 'Press Start 2P', cursive;
-    text-weight: bold;
+    font-weight: bold;
 
     &:hover{
         color: gold;
         background-color: #000000;
         transform: scale(1.2);
     }
-`
+
+    @media (max-width: 1024px) {
+        min-width: 200px;
+        font-size: 0.9em;
+        padding: 8px;
+    }
+
+    @media (max-width: 768px) {
+        min-width: 180px;
+        font-size: 0.8em;
+        padding: 7px;
+    }
+
+    @media (max-width: 480px) {
+        min-width: 150px;
+        font-size: 0.7em;
+        padding: 6px;
+    }
+
+    @media (max-width: 320px) {
+        min-width: 120px;
+        font-size: 0.6em;
+        padding: 5px;
+    }
+`;

@@ -16,11 +16,6 @@ export const ModelContainer = styled.footer`
     min-width: 250px;
     min-height: 100px;
     flex-direction: column;
-    
-    @media (max-width: 1024px) {
-        min-width: 220px;
-        min-height: 90px;
-    }
 
     @media (max-width: 768px) {
         min-width: 200px;
@@ -63,17 +58,17 @@ export const NumberInput = styled.input`
     }
 
     @media (max-width: 768px) {
-        min-width: 180px;
+        width: 180px;
         font-size: 1.1em;
     }
 
     @media (max-width: 480px) {
-        min-width: 160px;
+        width: 160px;
         font-size: 1em;
     }
 
     @media (max-width: 320px) {
-        min-width: 140px;
+        width: 140px;
         font-size: 0.9em;
     }
 `;
